@@ -2,7 +2,7 @@ import httpx
 
 
 def get_access_token(phone_number, password):
-    url = 'http://127.0.0.1:8848/users/get-access-token'
+    url = 'http://bebinca.cc/users/get-access-token'
     data = {
         'phone_number': phone_number,
         'password': password
