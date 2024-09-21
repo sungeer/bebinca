@@ -7,6 +7,7 @@ def create_app():
 
     register_errors(app)
     register_events(app)
+    register_routers(app)
     return app
 
 
