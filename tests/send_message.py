@@ -7,7 +7,7 @@ console = Console(width=100)
 
 
 def fetch_stream(access_token, content, conversation_id):
-    url = 'http://127.0.0.1:8848/chats/send-message'
+    url = 'http://bebinca.cc/chats/send-message'
     headers = {'Authorization': f'Bearer {access_token}'}
     data = {
         'content': content,
@@ -34,7 +34,7 @@ def run(access_token, content, conversation_id):
 
 
 if __name__ == '__main__':
-    access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZXhwIjoxNzI2NjE4NzE4LjM3OTk4fQ.hTyh_BqKfNTBacgTqQQSlxZFjemb7ulWG13Nd84nNIY'
-    conversation_id = 'b56e1308378b44248a7c9e011d1cdbad'
+    access_token = 'eyJhbGciOiJIUzI1NiacgTqQQSlxZFjemb7ulWG13Nd84nNIY'
+    conversation_id = 'b56bad'
     content = '你是谁？'
     run(access_token, content, conversation_id)

@@ -4,8 +4,8 @@ import httpx
 from starlette.responses import StreamingResponse
 
 from bebinca.configs import settings
-from bebinca.exts.logs import logger
-from bebinca.exts.requests import httpx_common, httpx_stream
+from bebinca.utils.log_util import logger
+from bebinca.utils.http_client import httpx_common, httpx_stream
 from bebinca.utils.error_code import ErrorCode
 from bebinca.utils.tools import jsonify, abort
 from bebinca.utils import jwt_util, tools

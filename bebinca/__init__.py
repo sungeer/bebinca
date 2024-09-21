@@ -1,12 +1,5 @@
 from starlette.applications import Starlette
-from starlette.requests import Request
 from starlette.responses import JSONResponse
-from starlette.routing import Mount
-from starlette.exceptions import HTTPException
-from starlette.middleware.cors import CORSMiddleware
-
-from bebinca.exts import db, requests, logs
-from bebinca.exts.logs import logger, stop_logger
 
 
 def create_app():
@@ -14,15 +7,14 @@ def create_app():
 
     register_errors(app)
     register_events(app)
-    register_middlewares(app)
-    register_routers(app)
     return app
 
 
 def register_errors(app):
+    from bebinca.utils.log_util import logger
 
     @app.exception_handler(Exception)
-    async def generic_exception_handler(request: Request, exc: Exception):
+    async def generic_exception_handler(request, exc):
         try:
             logger.exception(exc)
         except (Exception,):
@@ -34,7 +26,8 @@ def register_errors(app):
 
 
 def register_events(app):
-    from bebinca.exts.db import db
+    from bebinca.utils.db_util import db
+    from bebinca.utils import http_client
 
     @app.on_event('startup')
     async def startup():
@@ -43,22 +36,7 @@ def register_events(app):
     @app.on_event('shutdown')
     async def shutdown():
         await db.disconnect()
-        await requests.close_httpx()
-        try:
-            logs.stop_logger()
-        except (Exception,):
-            pass
-
-
-def register_middlewares(app):
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=['*'],
-        allow_credentials=True,
-        allow_methods=['*'],
-        allow_headers=['*'],
-        max_age=600,
-    )
+        await http_client.close_httpx()
 
 
 def register_routers(app):

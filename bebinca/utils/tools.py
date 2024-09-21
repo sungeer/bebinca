@@ -6,7 +6,7 @@ from decimal import Decimal
 
 from starlette.responses import JSONResponse
 
-from bebinca.utils.resp_util import BaseResponse
+from bebinca.utils.response_schema import ResponseSchema
 
 
 class JsonExtendEncoder(json.JSONEncoder):
@@ -36,14 +36,14 @@ def jsonify(*args, **kwargs):
         content = args[0]
     else:
         content = args or kwargs
-    response = BaseResponse()
+    response = ResponseSchema()
     response.data = content
     response = response.to_dict()
     return JsonExtendResponse(response)
 
 
 def abort(error_code, message):
-    response = BaseResponse()
+    response = ResponseSchema()
     response.status = False
     response.error_code = error_code
     response.message = message

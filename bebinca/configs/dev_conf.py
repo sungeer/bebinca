@@ -7,7 +7,7 @@ class DevSettings(BaseSettings):
     # mysql
     db_name = 'bebinca'
     db_port = 3306
-    db_host = 'localhost'
+    db_host = '127.0.0.1'
 
     db_pool_size = 1
     db_max_overflow = 10

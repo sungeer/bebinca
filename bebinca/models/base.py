@@ -1,4 +1,4 @@
-from bebinca.exts.db import creat_db_pool
+from bebinca.utils.db_util import creat_db_pool
 
 
 class BaseModel:

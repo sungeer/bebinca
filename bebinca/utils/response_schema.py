@@ -1,4 +1,4 @@
-class BaseResponse:
+class ResponseSchema:
 
     def __init__(self):
         self.status = True

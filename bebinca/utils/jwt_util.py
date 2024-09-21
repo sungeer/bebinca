@@ -5,7 +5,7 @@ import jwt  # python -m pip install pyjwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
 from bebinca.configs import settings
-from bebinca.exts.logs import logger
+from bebinca.utils.log_util import logger
 
 
 def set_password(password):

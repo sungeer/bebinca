@@ -5,9 +5,9 @@ class ProdSettings(BaseSettings):
     env = 'prod'
 
     # mysql
-    db_name = 'WantSun$bebinca'
+    db_name = 'bebinca'
     db_port = 3306
-    db_host = 'WantSun.mysql.pythonanywhere-services.com'
+    db_host = '127.0.0.1'
 
     db_pool_size = 1
     db_max_overflow = 10
