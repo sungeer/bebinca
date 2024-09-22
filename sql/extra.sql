@@ -1,4 +1,12 @@
 
+-- 删除表中所有行，并重置自增列
+TRUNCATE TABLE table_name;
+
+
+
+
+
+
 CREATE TABLE workflow (
     ID INT(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
     Name VARCHAR(255) NOT NULL COMMENT '流程名称',

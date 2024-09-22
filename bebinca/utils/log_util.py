@@ -1,28 +1,17 @@
 import os
 import logging
-from logging.handlers import RotatingFileHandler
-from concurrent.futures import ThreadPoolExecutor
+from logging.handlers import RotatingFileHandler, QueueHandler, QueueListener
+from queue import Queue
+import time
 
 from bebinca.configs import settings
-
-executor = ThreadPoolExecutor(max_workers=1)  # 创建线程池
-
-
-class ThreadPoolHandler(logging.Handler):
-    def __init__(self, handler):
-        super().__init__()
-        self.handler = handler
-
-    def emit(self, record):
-        executor.submit(self.handler.emit, record)  # 将日志记录任务提交到线程池中
-
 
 app_env = settings.env
 app_name = settings.app_name
 
-formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logger = logging.getLogger(app_name)
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 def create_file_handler():
@@ -31,28 +20,42 @@ def create_file_handler():
     os.makedirs(log_dir, exist_ok=True)
     log_file = os.path.join(log_dir, 'bebinca.log')
     file_handler = RotatingFileHandler(log_file, maxBytes=10 * 1024 * 1024, backupCount=10, encoding='utf-8')
-    file_handler.setLevel(logging.INFO)
-    file_handler.setFormatter(formatter)
     return file_handler
 
 
-def create_console_handler():
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.DEBUG)
-    console_handler.setFormatter(formatter)
-    return console_handler
+# 创建日志队列
+log_queue = Queue(-1)
+
+# 创建控制台处理器
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(formatter)
+
+# 创建 QueueHandler
+queue_handler = QueueHandler(log_queue)
+logger.addHandler(queue_handler)
+
+if app_env == 'dev':
+    logger.setLevel(logging.DEBUG)
+    queue_listener = QueueListener(log_queue, console_handler)
+else:
+    logger.setLevel(logging.INFO)
+    file_handler = create_file_handler()
+    file_handler.setFormatter(formatter)
+    queue_listener = QueueListener(log_queue, file_handler, console_handler)
+
+# 启动 QueueListener
+queue_listener.start()
 
 
-handler_funcs = {
-    'dev': create_console_handler,
-    'prod': create_file_handler
-}
+def stop_logger():
+    """停止日志监听器"""
+    while not log_queue.empty():
+        time.sleep(0.1)
+    queue_listener.stop()
 
-handler_func = handler_funcs.get(app_env, create_console_handler)
-handler = handler_func()
 
-logger = logging.getLogger(app_name)
-if not logger.handlers:
-    # logger.addHandler(handler)
-    thread_pool_handler = ThreadPoolHandler(handler)
-    logger.addHandler(thread_pool_handler)
+# 示例日志记录
+# logger.info("This is a test log message.")
+
+# 在程序退出时调用 stop_logger()
+# stop_logger()

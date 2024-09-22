@@ -28,7 +28,6 @@ def register_errors(app):
 
 def register_events(app):
     from bebinca.utils.db_util import db
-    from bebinca.utils import http_client
 
     @app.on_event('startup')
     async def startup():
@@ -37,7 +36,13 @@ def register_events(app):
     @app.on_event('shutdown')
     async def shutdown():
         await db.disconnect()
+        from bebinca.utils import http_client
         await http_client.close_httpx()
+        try:
+            from bebinca.utils.log_util import stop_logger
+            stop_logger()
+        except (Exception,):
+            pass
 
 
 def register_routers(app):
