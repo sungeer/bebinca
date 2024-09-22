@@ -30,7 +30,7 @@ async def get_chat_id(request):
         error_code = ErrorCode.USER_NOT_FOUND.value
         message = 'user not found at chat_id'
         logger.error(message)
-        abort(error_code, message)
+        return abort(error_code, message)
 
     body = await request.json()
     title = body.get('title')
@@ -38,7 +38,7 @@ async def get_chat_id(request):
         error_code = ErrorCode.PARAMETER_MISSING.value
         message = 'missing title at chat_id'
         logger.error(message)
-        abort(error_code, message)
+        return abort(error_code, message)
 
     url = f'{settings.ai_url}/v1/oapi/agent/chat/conversation/create'
     data = {
@@ -52,26 +52,26 @@ async def get_chat_id(request):
         error_code = ErrorCode.EXTERNAL_API_CALL_FAILED.value
         message = 'timeout at chat_id'
         logger.error(message)
-        abort(error_code, message)
+        return abort(error_code, message)
     try:
         response = response.json()
     except json.JSONDecodeError:
         error_code = ErrorCode.DESERIALIZATION_FAILED.value
         message = 'json error at chat_id'
         logger.error(f'{message}:{response}')
-        abort(error_code, message)
+        return abort(error_code, message)
     data = response.get('data')
     if not data:
         error_code = ErrorCode.EXTERNAL_API_MISSING_DATA.value
         message = 'missing data at chat_id'
         logger.error(f'{message}:{response}')
-        abort(error_code, message)
+        return abort(error_code, message)
     conversation_id = data.get('conversation_id')
     if not conversation_id:
         error_code = ErrorCode.EXTERNAL_API_MISSING_DATA.value
         message = 'missing conversation_id at chat_id'
         logger.error(f'{message}:{data}')
-        abort(error_code, message)
+        return abort(error_code, message)
     await ChatModel().add_chat(conversation_id, title, user_id)
     return jsonify(conversation_id)
 
@@ -127,7 +127,7 @@ async def send_message(request):
         error_code = ErrorCode.USER_NOT_FOUND.value
         message = 'user not found at send_message'
         logger.error(message)
-        abort(error_code, message)
+        return abort(error_code, message)
 
     body = await request.json()
 
@@ -136,14 +136,14 @@ async def send_message(request):
         error_code = ErrorCode.PARAMETER_MISSING.value
         message = 'missing conversation_id at send_message'
         logger.error(message)
-        abort(error_code, message)
+        return abort(error_code, message)
 
     content = body.get('content')
     if not content:
         error_code = ErrorCode.PARAMETER_MISSING.value
         message = 'missing content at send_message'
         logger.error(message)
-        abort(error_code, message)
+        return abort(error_code, message)
 
     trace_id = tools.generate_uuid()
     chat_info = await ChatModel().get_chat_by_conversation(conversation_id)
@@ -161,10 +161,10 @@ async def get_chats(request):
         error_code = ErrorCode.USER_NOT_FOUND.value
         message = 'user not found at send_message'
         logger.error(message)
-        abort(error_code, message)
+        return abort(error_code, message)
 
     chats = await ChatModel().get_chats(user_id)
-    return chats
+    return jsonify(chats)
 
 
 # 所有问答
@@ -174,7 +174,7 @@ async def get_messages(request):
         error_code = ErrorCode.USER_NOT_FOUND.value
         message = 'user not found at send_message'
         logger.error(message)
-        abort(error_code, message)
+        return abort(error_code, message)
 
     body = await request.json()
     conversation_id = body.get('conversation_id')
@@ -182,7 +182,7 @@ async def get_messages(request):
         error_code = ErrorCode.PARAMETER_MISSING.value
         message = 'missing conversation_id at get_messages'
         logger.error(message)
-        abort(error_code, message)
+        return abort(error_code, message)
 
     chats = await MessageModel().get_messages(conversation_id)
-    return chats
+    return jsonify(chats)

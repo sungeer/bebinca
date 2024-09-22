@@ -1,5 +1,6 @@
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse
+from starlette.exceptions import HTTPException
 
 
 def create_app():
@@ -13,17 +14,28 @@ def create_app():
 
 def register_errors(app):
     from bebinca.utils.log_util import logger
+    from bebinca.utils.tools import abort
+
+    error_messages = {
+        400: 'Invalid request.',
+        403: 'Access forbidden.',
+        404: 'The requested URL was not found on the server.',
+        405: 'The method is not allowed for the requested URL.'
+    }
+
+    @app.exception_handler(HTTPException)
+    async def http_exception_handler(request, exc):
+        error_code = exc.status_code
+        message = error_messages.get(error_code, exc.detail)
+        return abort(error_code, message)
 
     @app.exception_handler(Exception)
-    async def generic_exception_handler(request, exc):
+    async def internal_server_error_handler(request, exc):
         try:
             logger.exception(exc)
         except (Exception,):
             pass
-        return JSONResponse(
-            {'detail': 'Internal server error'},
-            status_code=500
-        )
+        return abort(500, 'An internal server error occurred.')
 
 
 def register_events(app):
