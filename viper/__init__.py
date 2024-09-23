@@ -6,17 +6,9 @@ from viper.configs import settings
 def create_app():
     app = Flask('viper')
 
-    register_logging(app)
     register_blueprints(app)
     register_errors(app)
     return app
-
-
-def register_logging(app):
-    from viper.utils.log_util import logger
-
-    app.logger.handlers = []
-    logger.info('Register logging.')
 
 
 def register_blueprints(app):
