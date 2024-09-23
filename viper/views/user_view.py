@@ -6,7 +6,7 @@ from viper.utils import jwt_util
 
 
 def get_access_token():
-    body = request.json()
+    body = request.json
     phone_number = body['phone_number']
     password = body['password']
     user_info = UserModel().get_user_by_phone(phone_number)

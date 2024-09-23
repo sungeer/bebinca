@@ -24,23 +24,23 @@ def register_errors(app):
 
     @app.errorhandler(400)
     def bad_request(e):
-        return abort(400, 'Invalid request.')
+        return abort(10107, 'Invalid request.')
 
     @app.errorhandler(403)
     def bad_request(e):
-        return abort(403, 'Access forbidden.')
+        return abort(10103, 'Access forbidden.')
 
     @app.errorhandler(404)
     def page_not_found(e):
-        return abort(404, 'The requested URL was not found on the server.')
+        return abort(10104, 'The requested URL was not found on the server.')
 
     @app.errorhandler(405)
     def page_not_found(e):
-        return abort(405, 'The method is not allowed for the requested URL.')
+        return abort(10105, 'The method is not allowed for the requested URL.')
 
     @app.errorhandler(500)
     def internal_server_error(e):
-        return abort(500, 'An internal server error occurred.')
+        return abort(60600, 'An internal server error occurred.')
 
 
 app = create_app()
