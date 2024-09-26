@@ -6,7 +6,7 @@ from starlette.responses import StreamingResponse
 from bebinca.configs import settings
 from bebinca.utils.log_util import logger
 from bebinca.utils.http_client import httpx_common, httpx_stream
-from bebinca.utils.error_code import ErrorCode
+from bebinca.utils.error_enum import ErrorEnum
 from bebinca.utils.tools import jsonify, abort
 from bebinca.utils import jwt_util, tools
 from bebinca.models.chat_model import ChatModel
@@ -27,7 +27,7 @@ headers = {
 async def get_chat_id(request):
     user_id, message = jwt_util.verify_token(request)
     if not user_id:
-        error_code = ErrorCode.USER_NOT_FOUND.value
+        error_code = ErrorEnum.USER_NOT_FOUND.value
         message = 'user not found at chat_id'
         logger.error(message)
         return abort(error_code, message)
@@ -35,7 +35,7 @@ async def get_chat_id(request):
     body = await request.json()
     title = body.get('title')
     if not title:
-        error_code = ErrorCode.PARAMETER_MISSING.value
+        error_code = ErrorEnum.PARAMETER_MISSING.value
         message = 'missing title at chat_id'
         logger.error(message)
         return abort(error_code, message)
@@ -49,26 +49,26 @@ async def get_chat_id(request):
     try:
         response = await httpx_common.post(url, headers=headers, json=data)
     except httpx.TimeoutException:
-        error_code = ErrorCode.EXTERNAL_API_CALL_FAILED.value
+        error_code = ErrorEnum.EXTERNAL_API_CALL_FAILED.value
         message = 'timeout at chat_id'
         logger.error(message)
         return abort(error_code, message)
     try:
         response = response.json()
     except json.JSONDecodeError:
-        error_code = ErrorCode.DESERIALIZATION_FAILED.value
+        error_code = ErrorEnum.DESERIALIZATION_FAILED.value
         message = 'json error at chat_id'
         logger.error(f'{message}:{response}')
         return abort(error_code, message)
     data = response.get('data')
     if not data:
-        error_code = ErrorCode.EXTERNAL_API_MISSING_DATA.value
+        error_code = ErrorEnum.EXTERNAL_API_MISSING_DATA.value
         message = 'missing data at chat_id'
         logger.error(f'{message}:{response}')
         return abort(error_code, message)
     conversation_id = data.get('conversation_id')
     if not conversation_id:
-        error_code = ErrorCode.EXTERNAL_API_MISSING_DATA.value
+        error_code = ErrorEnum.EXTERNAL_API_MISSING_DATA.value
         message = 'missing conversation_id at chat_id'
         logger.error(f'{message}:{data}')
         return abort(error_code, message)
@@ -124,7 +124,7 @@ async def stream_data(conversation_id, chat_id, trace_id, content):
 async def send_message(request):
     user_id, message = jwt_util.verify_token(request)  # 用户鉴权
     if not user_id:
-        error_code = ErrorCode.USER_NOT_FOUND.value
+        error_code = ErrorEnum.USER_NOT_FOUND.value
         message = 'user not found at send_message'
         logger.error(message)
         return abort(error_code, message)
@@ -133,14 +133,14 @@ async def send_message(request):
 
     conversation_id = body.get('conversation_id')
     if not conversation_id:
-        error_code = ErrorCode.PARAMETER_MISSING.value
+        error_code = ErrorEnum.PARAMETER_MISSING.value
         message = 'missing conversation_id at send_message'
         logger.error(message)
         return abort(error_code, message)
 
     content = body.get('content')
     if not content:
-        error_code = ErrorCode.PARAMETER_MISSING.value
+        error_code = ErrorEnum.PARAMETER_MISSING.value
         message = 'missing content at send_message'
         logger.error(message)
         return abort(error_code, message)
@@ -158,7 +158,7 @@ async def send_message(request):
 async def get_chats(request):
     user_id, message = jwt_util.verify_token(request)  # 用户鉴权
     if not user_id:
-        error_code = ErrorCode.USER_NOT_FOUND.value
+        error_code = ErrorEnum.USER_NOT_FOUND.value
         message = 'user not found at send_message'
         logger.error(message)
         return abort(error_code, message)
@@ -171,7 +171,7 @@ async def get_chats(request):
 async def get_messages(request):
     user_id, message = jwt_util.verify_token(request)  # 用户鉴权
     if not user_id:
-        error_code = ErrorCode.USER_NOT_FOUND.value
+        error_code = ErrorEnum.USER_NOT_FOUND.value
         message = 'user not found at send_message'
         logger.error(message)
         return abort(error_code, message)
@@ -179,7 +179,7 @@ async def get_messages(request):
     body = await request.json()
     conversation_id = body.get('conversation_id')
     if not conversation_id:
-        error_code = ErrorCode.PARAMETER_MISSING.value
+        error_code = ErrorEnum.PARAMETER_MISSING.value
         message = 'missing conversation_id at get_messages'
         logger.error(message)
         return abort(error_code, message)

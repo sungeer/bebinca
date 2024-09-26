@@ -15,18 +15,13 @@ def create_app():
 def register_errors(app):
     from bebinca.utils.log_util import logger
     from bebinca.utils.tools import abort
-
-    error_messages = {
-        400: 'Invalid request.',
-        403: 'Access forbidden.',
-        404: 'The requested URL was not found on the server.',
-        405: 'The method is not allowed for the requested URL.'
-    }
+    from bebinca.utils import constants
 
     @app.exception_handler(HTTPException)
     async def http_exception_handler(request, exc):
-        error_code = exc.status_code
-        message = error_messages.get(error_code, exc.detail)
+        http_code = exc.status_code
+        message = constants.http_map.get(http_code, exc.detail)
+        error_code = constants.error_map.get(http_code, http_code)
         return abort(error_code, message)
 
     @app.exception_handler(Exception)
@@ -35,7 +30,7 @@ def register_errors(app):
             logger.exception(exc)
         except (Exception,):
             pass
-        return abort(500, 'An internal server error occurred.')
+        return abort(70700, 'An internal server error occurred.')
 
 
 def register_events(app):
