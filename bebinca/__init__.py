@@ -13,10 +13,8 @@ def create_app():
 
 
 def register_errors(app):
-    from bebinca.configs import settings
     from bebinca.utils.log_util import logger
     from bebinca.utils.tools import abort
-    app_env = settings.env
 
     error_messages = {
         400: 'Invalid request.',
@@ -33,11 +31,10 @@ def register_errors(app):
 
     @app.exception_handler(Exception)
     async def internal_server_error_handler(request, exc):
-        if app_env != 'dev':
-            try:
-                logger.exception(exc)
-            except (Exception,):
-                pass
+        try:
+            logger.exception(exc)
+        except (Exception,):
+            pass
         return abort(500, 'An internal server error occurred.')
 
 
