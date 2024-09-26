@@ -13,8 +13,10 @@ def create_app():
 
 
 def register_errors(app):
+    from bebinca.configs import settings
     from bebinca.utils.log_util import logger
     from bebinca.utils.tools import abort
+    app_env = settings.env
 
     error_messages = {
         400: 'Invalid request.',
@@ -31,10 +33,11 @@ def register_errors(app):
 
     @app.exception_handler(Exception)
     async def internal_server_error_handler(request, exc):
-        try:
-            logger.exception(exc)
-        except (Exception,):
-            pass
+        if app_env != 'dev':
+            try:
+                logger.exception(exc)
+            except (Exception,):
+                pass
         return abort(500, 'An internal server error occurred.')
 
 
@@ -48,8 +51,13 @@ def register_events(app):
     @app.on_event('shutdown')
     async def shutdown():
         await db.disconnect()
+
         from bebinca.utils import http_client
         await http_client.close_httpx()
+
+        from bebinca.utils import redis_util
+        await redis_util.close_redis()
+
         try:
             from bebinca.utils.log_util import stop_logger
             stop_logger()

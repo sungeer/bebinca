@@ -48,14 +48,6 @@ queue_listener.start()
 
 
 def stop_logger():
-    """停止日志监听器"""
     while not log_queue.empty():
         time.sleep(0.1)
     queue_listener.stop()
-
-
-# 示例日志记录
-# logger.info("This is a test log message.")
-
-# 在程序退出时调用 stop_logger()
-# stop_logger()

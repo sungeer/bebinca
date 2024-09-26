@@ -17,7 +17,7 @@ def get_settings():
     load_dotenv()
     config_name = os.getenv('APP_ENV', 'prod')
     configs = config[config_name]()  # oop
-    envs = ['SEC_KEY', 'JWT_SECRET_KEY', 'DB_USER', 'DB_PASS', 'AI_API_KEY', 'AI_WORKSPACE_ID', 'AI_ROBOT_ID']
+    envs = ['SEC_KEY', 'JWT_SECRET_KEY', 'DB_USER', 'DB_PASS', 'REDIS_PASS', 'AI_API_KEY', 'AI_WORKSPACE_ID', 'AI_ROBOT_ID']
     envs_dict = {}
     for env in envs:
         key = env.lower()
