@@ -6,7 +6,6 @@ from starlette.responses import StreamingResponse
 from bebinca.configs import settings
 from bebinca.utils.log_util import logger
 from bebinca.utils.http_client import httpx_common, httpx_stream
-from bebinca.utils.error_enum import ErrorEnum
 from bebinca.utils.tools import jsonify, abort
 from bebinca.utils import jwt_util, tools
 from bebinca.models.chat_model import ChatModel
@@ -27,18 +26,12 @@ headers = {
 async def get_chat_id(request):
     user_id, message = jwt_util.verify_token(request)
     if not user_id:
-        error_code = ErrorEnum.USER_NOT_FOUND.value
-        message = 'user not found at chat_id'
-        logger.error(message)
-        return abort(error_code, message)
+        return abort(404, 'User is not found.')
 
     body = await request.json()
     title = body.get('title')
     if not title:
-        error_code = ErrorEnum.PARAMETER_MISSING.value
-        message = 'missing title at chat_id'
-        logger.error(message)
-        return abort(error_code, message)
+        return abort(404, 'Title is not found.')
 
     url = f'{settings.ai_url}/v1/oapi/agent/chat/conversation/create'
     data = {
@@ -49,10 +42,8 @@ async def get_chat_id(request):
     try:
         response = await httpx_common.post(url, headers=headers, json=data)
     except httpx.TimeoutException:
-        error_code = ErrorEnum.EXTERNAL_API_CALL_FAILED.value
-        message = 'timeout at chat_id'
-        logger.error(message)
-        return abort(error_code, message)
+        logger.error('Timeout from function of get_chat_id.')
+        return abort(504, 'Gateway timeout.')
     try:
         response = response.json()
     except json.JSONDecodeError:

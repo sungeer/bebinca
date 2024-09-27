@@ -1,5 +1,6 @@
+from http import HTTPStatus
+
 from starlette.applications import Starlette
-from starlette.responses import JSONResponse
 from starlette.exceptions import HTTPException
 
 
@@ -15,22 +16,22 @@ def create_app():
 def register_errors(app):
     from bebinca.utils.log_util import logger
     from bebinca.utils.tools import abort
-    from bebinca.utils import constants
 
     @app.exception_handler(HTTPException)
     async def http_exception_handler(request, exc):
         http_code = exc.status_code
-        message = constants.http_map.get(http_code, exc.detail)
-        error_code = constants.error_map.get(http_code, http_code)
-        return abort(error_code, message)
+        message = exc.detail
+        return abort(http_code, message)
 
     @app.exception_handler(Exception)
-    async def internal_server_error_handler(request, exc):
+    async def global_exception_handler(request, exc):
+        http_code = getattr(exc, 'status_code', 500)
+        message = HTTPStatus(http_code).phrase
         try:
             logger.exception(exc)
         except (Exception,):
             pass
-        return abort(70700, 'An internal server error occurred.')
+        return abort(http_code, message)
 
 
 def register_events(app):
