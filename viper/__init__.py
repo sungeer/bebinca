@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from werkzeug.http import HTTP_STATUS_CODES
 
 from viper.configs import settings
 
@@ -22,25 +23,12 @@ def register_errors(app):
     from viper.utils.log_util import logger
     from viper.utils.tools import abort
 
-    @app.errorhandler(400)
-    def bad_request(e):
-        return abort(10107, 'Invalid request.')
-
-    @app.errorhandler(403)
-    def bad_request(e):
-        return abort(10103, 'Access forbidden.')
-
-    @app.errorhandler(404)
-    def page_not_found(e):
-        return abort(10104, 'The requested URL was not found on the server.')
-
-    @app.errorhandler(405)
-    def page_not_found(e):
-        return abort(10105, 'The method is not allowed for the requested URL.')
-
-    @app.errorhandler(500)
-    def internal_server_error(e):
-        return abort(60600, 'An internal server error occurred.')
+    @app.errorhandler(Exception)
+    def global_exception_handler(error):
+        http_code = getattr(error, 'code', 500)
+        message = HTTP_STATUS_CODES.get(http_code, str(error))
+        logger.exception(error)
+        return abort(http_code, message)
 
 
 app = create_app()
