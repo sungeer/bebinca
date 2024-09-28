@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from werkzeug.http import HTTP_STATUS_CODES
+from werkzeug.exceptions import HTTPException
 
 from viper.configs import settings
 
@@ -23,12 +23,18 @@ def register_errors(app):
     from viper.utils.log_util import logger
     from viper.utils.tools import abort
 
+    @app.errorhandler(HTTPException)
+    def http_exception_handler(error):
+        # error_code = getattr(error, 'code', 500)
+        # message = HTTP_STATUS_CODES.get(error_code, str(error))
+        error_code = error.code
+        return abort(error_code)
+
     @app.errorhandler(Exception)
     def global_exception_handler(error):
-        http_code = getattr(error, 'code', 500)
-        message = HTTP_STATUS_CODES.get(http_code, str(error))
         logger.exception(error)
-        return abort(http_code, message)
+        error_code = 500
+        return abort(error_code)
 
 
 app = create_app()
