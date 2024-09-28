@@ -25,12 +25,9 @@ def register_errors(app):
 
     @app.exception_handler(Exception)
     async def global_exception_handler(request, exc):
+        logger.exception(exc)
         http_code = getattr(exc, 'status_code', 500)
         message = HTTPStatus(http_code).phrase
-        try:
-            logger.exception(exc)
-        except (Exception,):
-            pass
         return abort(http_code, message)
 
 
