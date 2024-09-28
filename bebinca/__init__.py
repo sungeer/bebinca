@@ -19,16 +19,13 @@ def register_errors(app):
 
     @app.exception_handler(HTTPException)
     async def http_exception_handler(request, exc):
-        http_code = exc.status_code
-        message = exc.detail
-        return abort(http_code, message)
+        # message = exc.detail
+        return abort(exc.status_code)
 
     @app.exception_handler(Exception)
     async def global_exception_handler(request, exc):
         logger.exception(exc)
-        http_code = getattr(exc, 'status_code', 500)
-        message = HTTPStatus(http_code).phrase
-        return abort(http_code, message)
+        return abort(500)
 
 
 def register_events(app):

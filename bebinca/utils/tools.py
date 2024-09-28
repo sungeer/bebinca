@@ -3,6 +3,7 @@ import json
 import uuid
 from datetime import datetime, date
 from decimal import Decimal
+from http import HTTPStatus
 
 from starlette.responses import JSONResponse
 
@@ -52,7 +53,9 @@ def jsonify(*args, **kwargs):
     return JsonExtendResponse(response)
 
 
-def abort(error_code, message):
+def abort(error_code, message=None):
+    if not message:
+        message = HTTPStatus(error_code).phrase
     response = BaseResponse()
     response.status = False
     response.error_code = error_code
