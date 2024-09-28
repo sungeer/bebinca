@@ -27,14 +27,13 @@ def register_errors(app):
     def http_exception_handler(error):
         # error_code = getattr(error, 'code', 500)
         # message = HTTP_STATUS_CODES.get(error_code, str(error))
-        error_code = error.code
-        return abort(error_code)
+        # error_code = error.code
+        return abort(error.code)
 
     @app.errorhandler(Exception)
     def global_exception_handler(error):
         logger.exception(error)
-        error_code = 500
-        return abort(error_code)
+        return abort(500)
 
 
 app = create_app()
