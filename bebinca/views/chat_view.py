@@ -26,12 +26,12 @@ headers = {
 async def get_chat_id(request):
     user_id, message = jwt_util.verify_token(request)
     if not user_id:
-        return abort(404, 'User is not found.')
+        return abort(404)
 
     body = await request.json()
     title = body.get('title')
     if not title:
-        return abort(404, 'Title is not found.')
+        return abort(404)
 
     url = f'{settings.ai_url}/v1/oapi/agent/chat/conversation/create'
     data = {
@@ -42,27 +42,17 @@ async def get_chat_id(request):
     try:
         response = await httpx_common.post(url, headers=headers, json=data)
     except httpx.TimeoutException:
-        logger.error('Timeout from function of get_chat_id.')
-        return abort(504, 'Gateway timeout.')
+        return abort(504)
     try:
         response = response.json()
     except json.JSONDecodeError:
-        error_code = ErrorEnum.DESERIALIZATION_FAILED.value
-        message = 'json error at chat_id'
-        logger.error(f'{message}:{response}')
-        return abort(error_code, message)
+        return abort(502)
     data = response.get('data')
     if not data:
-        error_code = ErrorEnum.EXTERNAL_API_MISSING_DATA.value
-        message = 'missing data at chat_id'
-        logger.error(f'{message}:{response}')
-        return abort(error_code, message)
+        return abort(502)
     conversation_id = data.get('conversation_id')
     if not conversation_id:
-        error_code = ErrorEnum.EXTERNAL_API_MISSING_DATA.value
-        message = 'missing conversation_id at chat_id'
-        logger.error(f'{message}:{data}')
-        return abort(error_code, message)
+        return abort(502)
     await ChatModel().add_chat(conversation_id, title, user_id)
     return jsonify(conversation_id)
 
@@ -115,26 +105,17 @@ async def stream_data(conversation_id, chat_id, trace_id, content):
 async def send_message(request):
     user_id, message = jwt_util.verify_token(request)  # 用户鉴权
     if not user_id:
-        error_code = ErrorEnum.USER_NOT_FOUND.value
-        message = 'user not found at send_message'
-        logger.error(message)
-        return abort(error_code, message)
+        return abort(401)
 
     body = await request.json()
 
     conversation_id = body.get('conversation_id')
     if not conversation_id:
-        error_code = ErrorEnum.PARAMETER_MISSING.value
-        message = 'missing conversation_id at send_message'
-        logger.error(message)
-        return abort(error_code, message)
+        return abort(400)
 
     content = body.get('content')
     if not content:
-        error_code = ErrorEnum.PARAMETER_MISSING.value
-        message = 'missing content at send_message'
-        logger.error(message)
-        return abort(error_code, message)
+        return abort(400)
 
     trace_id = tools.generate_uuid()
     chat_info = await ChatModel().get_chat_by_conversation(conversation_id)
@@ -149,10 +130,7 @@ async def send_message(request):
 async def get_chats(request):
     user_id, message = jwt_util.verify_token(request)  # 用户鉴权
     if not user_id:
-        error_code = ErrorEnum.USER_NOT_FOUND.value
-        message = 'user not found at send_message'
-        logger.error(message)
-        return abort(error_code, message)
+        return abort(401)
 
     chats = await ChatModel().get_chats(user_id)
     return jsonify(chats)
@@ -162,18 +140,12 @@ async def get_chats(request):
 async def get_messages(request):
     user_id, message = jwt_util.verify_token(request)  # 用户鉴权
     if not user_id:
-        error_code = ErrorEnum.USER_NOT_FOUND.value
-        message = 'user not found at send_message'
-        logger.error(message)
-        return abort(error_code, message)
+        return abort(401)
 
     body = await request.json()
     conversation_id = body.get('conversation_id')
     if not conversation_id:
-        error_code = ErrorEnum.PARAMETER_MISSING.value
-        message = 'missing conversation_id at get_messages'
-        logger.error(message)
-        return abort(error_code, message)
+        return abort(400)
 
     chats = await MessageModel().get_messages(conversation_id)
     return jsonify(chats)
