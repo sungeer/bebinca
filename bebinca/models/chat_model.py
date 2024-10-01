@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from bebinca.models.base import BaseModel
+from bebinca.models.base_model import BaseModel
 
 
 class ChatModel(BaseModel):

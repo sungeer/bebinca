@@ -14,7 +14,7 @@ def create_app():
 
 
 def register_errors(app):
-    from bebinca.utils.log_util import logger
+    from bebinca.models.log_model import logger
     from bebinca.utils.tools import abort
 
     @app.exception_handler(HTTPException)
@@ -24,7 +24,7 @@ def register_errors(app):
 
     @app.exception_handler(Exception)
     async def global_exception_handler(request, exc):
-        logger.exception(exc)
+        await logger.exception(exc)
         return abort(500)
 
 
@@ -44,12 +44,6 @@ def register_events(app):
 
         from bebinca.utils import redis_util
         await redis_util.close_redis()
-
-        try:
-            from bebinca.utils.log_util import stop_logger
-            stop_logger()
-        except (Exception,):
-            pass
 
 
 def register_routers(app):
