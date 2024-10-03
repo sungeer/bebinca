@@ -14,7 +14,7 @@ def create_app():
 
 
 def register_errors(app):
-    from bebinca.models.log_model import logger
+    from bebinca.models.log_model import LogModel
     from bebinca.utils.tools import abort
 
     @app.exception_handler(HTTPException)
@@ -24,7 +24,7 @@ def register_errors(app):
 
     @app.exception_handler(Exception)
     async def global_exception_handler(request, exc):
-        await logger.exception(exc)
+        await LogModel().exception(exc)
         return abort(500)
 
 
