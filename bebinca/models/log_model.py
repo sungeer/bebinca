@@ -60,4 +60,4 @@ if __name__ == '__main__':
     try:
         pass
     except Exception as exc:
-        logger.error(f'websocket error occurred: {exc}', exc_info=exc)  # exc_info=True
+        LogModel().error(f'websocket error occurred: {exc}', exc_info=exc)  # exc_info=True
