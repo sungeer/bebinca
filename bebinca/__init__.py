@@ -1,6 +1,5 @@
-from http import HTTPStatus
-
 from starlette.applications import Starlette
+from starlette.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException
 
 
@@ -9,6 +8,7 @@ def create_app():
 
     register_errors(app)
     register_events(app)
+    register_middlewares(app)
     register_routers(app)
     return app
 
@@ -44,6 +44,16 @@ def register_events(app):
 
         from bebinca.utils import redis_util
         await redis_util.close_redis()
+
+
+def register_middlewares(app):
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=['*'],  # 允许所有来源 ['https://example.com', 'https://anotherdomain.com']
+        allow_credentials=True,
+        allow_methods=['*'],  # 允许所有HTTP方法
+        allow_headers=['*'],  # 允许所有请求头
+    )
 
 
 def register_routers(app):
