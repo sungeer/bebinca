@@ -9,6 +9,7 @@ def create_app():
 
     register_blueprints(app)
     register_errors(app)
+    register_middlewares(app)
     return app
 
 
@@ -34,6 +35,12 @@ def register_errors(app):
     def global_exception_handler(error):
         logger.exception(error)
         return abort(500)
+
+
+def register_middlewares(app):
+    from viper.middlewares import cors_middleware
+
+    cors_middleware.init_app(app)
 
 
 app = create_app()
