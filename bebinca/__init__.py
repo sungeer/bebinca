@@ -13,21 +13,6 @@ def create_app():
     return app
 
 
-def register_errors(app):
-    from bebinca.models.log_model import LogModel
-    from bebinca.utils.tools import abort
-
-    @app.exception_handler(HTTPException)
-    async def http_exception_handler(request, exc):
-        # message = exc.detail
-        return abort(exc.status_code)
-
-    @app.exception_handler(Exception)
-    async def global_exception_handler(request, exc):
-        await LogModel().exception(exc)
-        return abort(500)
-
-
 def register_events(app):
     from bebinca.utils.db_util import db
 
@@ -54,6 +39,21 @@ def register_middlewares(app):
         allow_methods=['*'],  # 允许所有HTTP方法
         allow_headers=['*'],  # 允许所有请求头
     )
+
+
+def register_errors(app):
+    from bebinca.models.log_model import LogModel
+    from bebinca.utils.tools import abort
+
+    @app.exception_handler(HTTPException)
+    async def http_exception_handler(request, exc):
+        # message = exc.detail
+        return abort(exc.status_code)
+
+    @app.exception_handler(Exception)
+    async def global_exception_handler(request, exc):
+        await LogModel().exception(exc)
+        return abort(500)
 
 
 def register_routers(app):
