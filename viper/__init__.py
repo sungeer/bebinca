@@ -7,17 +7,16 @@ from viper.configs import settings
 def create_app():
     app = Flask('viper')
 
-    register_blueprints(app)
-    register_errors(app)
     register_middlewares(app)
+    register_errors(app)
+    register_blueprints(app)
     return app
 
 
-def register_blueprints(app):
-    from viper.urls import user_url, chat_url
+def register_middlewares(app):
+    from viper.middlewares import cors_middleware
 
-    app.register_blueprint(chat_url.chat_url)
-    app.register_blueprint(user_url.user_url, url_prefix='/user')
+    cors_middleware.init_app(app)
 
 
 def register_errors(app):
@@ -37,10 +36,11 @@ def register_errors(app):
         return abort(500)
 
 
-def register_middlewares(app):
-    from viper.middlewares import cors_middleware
+def register_blueprints(app):
+    from viper.urls import user_url, chat_url
 
-    cors_middleware.init_app(app)
+    app.register_blueprint(chat_url.chat_url)
+    app.register_blueprint(user_url.user_url, url_prefix='/user')
 
 
 app = create_app()
