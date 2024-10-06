@@ -19,9 +19,9 @@ class BaseModel:
     def commit(self):
         try:
             self.dbconn.commit()
-        except Exception as e:
+        except Exception as exc:
             self.rollback()
-            raise Exception('db commit failed:\n{}'.formate(e))
+            raise Exception(f'db commit failed: {exc}')
 
     def begin(self):
         if self.dbconn:
@@ -34,8 +34,8 @@ class BaseModel:
                     self.cursor.execute('UNLOCK TABLES;')
                     self.cursor.close()
                 self.dbconn.close()
-        except Exception as e:
-            raise Exception('db close failed:\n{}'.formate(e))
+        except Exception as exc:
+            raise Exception(f'db close failed: {exc}')
         finally:
             self.cursor = None
             self.dbconn = None
@@ -43,15 +43,15 @@ class BaseModel:
     def execute(self, sql_str, values=None):
         try:
             self.cursor.execute(sql_str, values)
-        except Exception as e:
+        except Exception as exc:
             self.rollback()
             self.close()
-            raise Exception('db execute failed:\n{}'.formate(e))
+            raise Exception(f'db execute failed: {exc}')
 
     def executemany(self, sql_str, values=None):
         try:
             self.cursor.executemany(sql_str, values)
-        except Exception as e:
+        except Exception as exc:
             self.rollback()
             self.close()
-            raise Exception('db executemany failed:\n{}'.formate(e))
+            raise Exception(f'db executemany failed: {exc}')

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask
 from werkzeug.exceptions import HTTPException
 
 from viper.configs import settings
