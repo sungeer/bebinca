@@ -58,8 +58,8 @@ def register_errors(app):
 
 def register_routers(app):
     from bebinca.urls import chat_url, user_url
-    app.router.mount('/chats', chat_url.chat_url)
-    app.router.mount('/users', user_url.user_url)
+    app.router.mount('/chat', chat_url.chat_url)
+    app.router.mount('/user', user_url.user_url)
 
 
 app = create_app()

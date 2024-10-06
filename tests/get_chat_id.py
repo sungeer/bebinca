@@ -2,7 +2,7 @@ import httpx
 
 
 def get_chat_id(access_token, title):
-    url = 'http://bebinca.cc/chats/chat-id'
+    url = 'http://bebinca.cc/chat/chat-id'
     headers = {'Authorization': f'Bearer {access_token}'}
     data = {'title': title}
     with httpx.Client() as client:

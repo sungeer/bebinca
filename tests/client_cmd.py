@@ -10,7 +10,7 @@ console = Console(width=100)
 
 
 def fetch_stream(access_token, content, conversation_id):
-    url = 'http://bebinca.cc/chats/send-message'
+    url = 'http://bebinca.cc/chat/send-message'
     headers = {'Authorization': f'Bearer {access_token}'}
     data = {
         'content': content,

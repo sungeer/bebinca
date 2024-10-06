@@ -24,9 +24,9 @@ headers = {
 
 
 async def get_chat_id(request):
-    user_id, message = await jwt_util.verify_token(request)
+    user_id, error_code = await jwt_util.verify_token(request)
     if not user_id:
-        return abort(404)
+        return abort(error_code)
 
     body = await request.json()
     title = body.get('title')
@@ -103,9 +103,9 @@ async def stream_data(conversation_id, chat_id, trace_id, content):
 
 
 async def send_message(request):
-    user_id, message = await jwt_util.verify_token(request)  # 用户鉴权
+    user_id, error_code = await jwt_util.verify_token(request)  # 用户鉴权
     if not user_id:
-        return abort(401)
+        return abort(error_code)
 
     body = await request.json()
 
@@ -128,9 +128,9 @@ async def send_message(request):
 
 # 所有会话
 async def get_chats(request):
-    user_id, message = await jwt_util.verify_token(request)  # 用户鉴权
+    user_id, error_code = await jwt_util.verify_token(request)  # 用户鉴权
     if not user_id:
-        return abort(401)
+        return abort(error_code)
 
     chats = await ChatModel().get_chats(user_id)
     return jsonify(chats)
@@ -138,9 +138,9 @@ async def get_chats(request):
 
 # 所有问答
 async def get_messages(request):
-    user_id, message = await jwt_util.verify_token(request)  # 用户鉴权
+    user_id, error_code = await jwt_util.verify_token(request)  # 用户鉴权
     if not user_id:
-        return abort(401)
+        return abort(error_code)
 
     body = await request.json()
     conversation_id = body.get('conversation_id')
