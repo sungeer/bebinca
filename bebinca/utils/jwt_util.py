@@ -5,7 +5,7 @@ import jwt  # python -m pip install pyjwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
 from bebinca.configs import settings
-from bebinca.utils.log_util import logger
+from bebinca.models.log_model import LogModel
 
 
 def set_password(password):
@@ -34,7 +34,7 @@ def extract_uid(token: str):
     return user_id
 
 
-def verify_token(request):
+async def verify_token(request):
     authorization_header = request.headers.get('Authorization')
     if authorization_header and authorization_header.startswith('Bearer '):
         jwt_token = authorization_header[len('Bearer '):]
@@ -48,8 +48,8 @@ def verify_token(request):
         return None, 'token has expired'
     except (InvalidTokenError,):
         return None, 'invalid token'
-    except Exception as e:
-        logger.error(f'token verification error: {str(e)}')
+    except Exception as exc:
+        await LogModel().error(f'token verification error: {str(exc)}')
         return None, 'token verification error'
     if not user_id:
         return None, 'user does not exist'

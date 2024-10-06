@@ -4,13 +4,13 @@ import httpx
 from starlette.responses import StreamingResponse
 
 from bebinca.configs import settings
-from bebinca.utils.log_util import logger
 from bebinca.utils.http_client import httpx_common, httpx_stream
 from bebinca.utils.tools import jsonify, abort
 from bebinca.utils import jwt_util, tools
 from bebinca.models.chat_model import ChatModel
 from bebinca.models.message_model import MessageModel
 from bebinca.models.content_model import ContentModel
+from bebinca.models.log_model import LogModel
 
 api_key = settings.ai_api_key
 workspace_id = settings.ai_workspace_id
@@ -24,7 +24,7 @@ headers = {
 
 
 async def get_chat_id(request):
-    user_id, message = jwt_util.verify_token(request)
+    user_id, message = await jwt_util.verify_token(request)
     if not user_id:
         return abort(404)
 
@@ -73,10 +73,10 @@ async def get_response(conversation_id, content):
                     continue
                 yield line
     except httpx.TimeoutException:
-        logger.error(f'ai time out: 【{conversation_id}】')
+        await LogModel().error(f'ai time out: 【{conversation_id}】')
         yield f'data: {tools.dict_to_json(error_msg)}\n\n'
     except Exception as exc:
-        logger.error(f'ai error 【{conversation_id}】:{exc}', exc_info=True)
+        await LogModel().error(f'ai error 【{conversation_id}】:{exc}', exc_info=True)
         yield f'data: {tools.dict_to_json(error_msg)}\n\n'
 
 
@@ -103,7 +103,7 @@ async def stream_data(conversation_id, chat_id, trace_id, content):
 
 
 async def send_message(request):
-    user_id, message = jwt_util.verify_token(request)  # 用户鉴权
+    user_id, message = await jwt_util.verify_token(request)  # 用户鉴权
     if not user_id:
         return abort(401)
 
@@ -128,7 +128,7 @@ async def send_message(request):
 
 # 所有会话
 async def get_chats(request):
-    user_id, message = jwt_util.verify_token(request)  # 用户鉴权
+    user_id, message = await jwt_util.verify_token(request)  # 用户鉴权
     if not user_id:
         return abort(401)
 
@@ -138,7 +138,7 @@ async def get_chats(request):
 
 # 所有问答
 async def get_messages(request):
-    user_id, message = jwt_util.verify_token(request)  # 用户鉴权
+    user_id, message = await jwt_util.verify_token(request)  # 用户鉴权
     if not user_id:
         return abort(401)
 
