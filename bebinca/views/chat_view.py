@@ -10,7 +10,7 @@ from bebinca.utils import jwt_util, tools
 from bebinca.models.chat_model import ChatModel
 from bebinca.models.message_model import MessageModel
 from bebinca.models.content_model import ContentModel
-from bebinca.models.log_model import LogModel
+from bebinca.utils.log_util import logger
 
 api_key = settings.ai_api_key
 workspace_id = settings.ai_workspace_id
@@ -73,10 +73,10 @@ async def get_response(conversation_id, content):
                     continue
                 yield line
     except httpx.TimeoutException:
-        await LogModel().error(f'ai time out: 【{conversation_id}】')
+        logger.error(f'ai time out: 【{conversation_id}】')
         yield f'data: {tools.dict_to_json(error_msg)}\n\n'
-    except Exception as exc:
-        await LogModel().error(f'ai error 【{conversation_id}】:{exc}', exc_info=True)
+    except (Exception,):
+        logger.opt(exception=True).error(f'ai error 【{conversation_id}】.')
         yield f'data: {tools.dict_to_json(error_msg)}\n\n'
 
 
