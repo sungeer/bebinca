@@ -20,7 +20,7 @@ def register_middlewares(app):
 
 
 def register_errors(app):
-    from viper.models.log_model import LogModel
+    from viper.utils.log_util import logger
     from viper.utils.tools import abort
 
     @app.errorhandler(HTTPException)
@@ -32,7 +32,7 @@ def register_errors(app):
 
     @app.errorhandler(Exception)
     def global_exception_handler(error):
-        LogModel().exception(error)
+        logger.exception(error)
         return abort(500)
 
 
