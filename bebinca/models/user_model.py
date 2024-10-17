@@ -1,4 +1,4 @@
-from viper.models.base_model import BaseModel
+from bebinca.models.base_model import BaseModel
 
 
 class UserModel(BaseModel):

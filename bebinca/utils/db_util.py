@@ -2,7 +2,7 @@ import MySQLdb
 from MySQLdb.cursors import DictCursor  # pip install mysqlclient
 from dbutils.pooled_db import PooledDB  # pip install DBUtils
 
-from viper.configs import settings
+from bebinca.configs import settings
 
 dbpool = PooledDB(
     creator=MySQLdb,

@@ -1,4 +1,4 @@
-from viper.configs.base_conf import BaseSettings
+from bebinca.configs.base_conf import BaseSettings
 
 
 class DevSettings(BaseSettings):

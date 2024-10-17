@@ -2,8 +2,8 @@ import os
 
 from dotenv import load_dotenv
 
-from viper.configs.dev_conf import DevSettings
-from viper.configs.prod_conf import ProdSettings
+from bebinca.configs.dev_conf import DevSettings
+from bebinca.configs.prod_conf import ProdSettings
 
 config = {
     'dev': DevSettings,

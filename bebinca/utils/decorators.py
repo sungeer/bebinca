@@ -1,7 +1,7 @@
 from functools import wraps
 
-from viper.configs import settings
-from viper.utils.log_util import logger
+from bebinca.configs import settings
+from bebinca.utils.log_util import logger
 
 app_env = settings.env
 

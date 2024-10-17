@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 class BaseSettings:
-    app_name = 'viper'
+    app_name = 'bebinca'
 
     # Path(__file__).resolve() 获取当前文件的绝对路径
     # parents 属性获取上级目录

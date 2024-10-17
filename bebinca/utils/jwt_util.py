@@ -4,8 +4,8 @@ import bcrypt  # python -m pip install bcrypt
 import jwt  # python -m pip install pyjwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
-from viper.configs import settings
-from viper.utils.log_util import logger
+from bebinca.configs import settings
+from bebinca.utils.log_util import logger
 
 
 def set_password(password):

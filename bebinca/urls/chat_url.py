@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from viper.views import chat_view
+from bebinca.views import chat_view
 
 chat_url = Blueprint('chat', __name__)
 

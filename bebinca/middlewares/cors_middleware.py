@@ -1,6 +1,6 @@
 from flask import request
 
-from viper.utils.tools import jsonify
+from bebinca.utils.tools import jsonify
 
 
 class CorsMiddleware:

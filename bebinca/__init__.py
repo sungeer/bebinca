@@ -1,11 +1,11 @@
 from flask import Flask
 from werkzeug.exceptions import HTTPException
 
-from viper.configs import settings
+from bebinca.configs import settings
 
 
 def create_app():
-    app = Flask('viper')
+    app = Flask('bebinca')
 
     register_middlewares(app)
     register_errors(app)
@@ -14,14 +14,14 @@ def create_app():
 
 
 def register_middlewares(app):
-    from viper.middlewares import cors_middleware
+    from bebinca.middlewares import cors_middleware
 
     cors_middleware.init_app(app)
 
 
 def register_errors(app):
-    from viper.utils.log_util import logger
-    from viper.utils.tools import abort
+    from bebinca.utils.log_util import logger
+    from bebinca.utils.tools import abort
 
     @app.errorhandler(HTTPException)
     def http_exception_handler(error):
@@ -37,7 +37,7 @@ def register_errors(app):
 
 
 def register_blueprints(app):
-    from viper.urls import user_url, chat_url
+    from bebinca.urls import user_url, chat_url
 
     app.register_blueprint(chat_url.chat_url)
     app.register_blueprint(user_url.user_url, url_prefix='/user')

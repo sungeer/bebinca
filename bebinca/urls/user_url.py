@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from viper.views import user_view
+from bebinca.views import user_view
 
 user_url = Blueprint('user', __name__)
 

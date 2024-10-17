@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/viper.iml" filepath="$PROJECT_DIR$/.idea/viper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/bebinca.iml" filepath="$PROJECT_DIR$/.idea/bebinca.iml" />
     </modules>
   </component>
 </project>

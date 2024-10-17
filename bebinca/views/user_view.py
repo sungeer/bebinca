@@ -1,8 +1,8 @@
 from flask import request
 
-from viper.models.user_model import UserModel
-from viper.utils.tools import jsonify, abort
-from viper.utils import jwt_util
+from bebinca.models.user_model import UserModel
+from bebinca.utils.tools import jsonify, abort
+from bebinca.utils import jwt_util
 
 
 def get_access_token():

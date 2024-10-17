@@ -3,7 +3,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from viper.configs import settings
+from bebinca.configs import settings
 
 log_dir = Path(settings.basedir).joinpath('logs')
 log_dir.mkdir(parents=True, exist_ok=True)

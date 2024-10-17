@@ -1,4 +1,4 @@
-from viper.utils.db_util import create_dbconn_mysql
+from bebinca.utils.db_util import create_dbconn_mysql
 
 
 class BaseModel:
