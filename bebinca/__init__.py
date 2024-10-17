@@ -7,16 +7,16 @@ from bebinca.configs import settings
 def create_app():
     app = Flask('bebinca')
 
-    register_middlewares(app)
+    register_extensions(app)
     register_errors(app)
     register_blueprints(app)
     return app
 
 
-def register_middlewares(app):
-    from bebinca.middlewares import cors_middleware
+def register_extensions(app):
+    from bebinca.utils.cors import cors
 
-    cors_middleware.init_app(app)
+    cors.init_app(app)
 
 
 def register_errors(app):
