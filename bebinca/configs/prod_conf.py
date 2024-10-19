@@ -5,6 +5,6 @@ class ProdSettings(BaseSettings):
     env = 'prod'
 
     # mysql
-    db_name = 'bebinca'
+    db_name = 'viper'
     db_port = 3306
     db_host = '127.0.0.1'

@@ -12,6 +12,7 @@ python -m pip install requests
 python -m pip install loguru
 python -m pip install granian
 python -m pip install flask-cors
+python -m pip install cerberus
 
 
 granian --interface wsgi bebinca:app

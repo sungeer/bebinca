@@ -2,6 +2,11 @@ from flask import Flask
 from werkzeug.exceptions import HTTPException
 
 from bebinca.configs import settings
+from bebinca.utils.cors import cors
+from bebinca.utils.tools import abort, jsonify_exc
+from bebinca.utils.log_util import logger
+from bebinca.utils.errors import ValidationError
+from bebinca.urls import user_url, chat_url
 
 
 def create_app():
@@ -14,21 +19,19 @@ def create_app():
 
 
 def register_extensions(app):
-    from bebinca.utils.cors import cors
-
     cors.init_app(app)
 
 
 def register_errors(app):
-    from bebinca.utils.log_util import logger
-    from bebinca.utils.tools import abort
+    @app.errorhandler(ValidationError)
+    def validation_exception_handler(error):
+        logger.opt(exception=True).info(error)
+        return jsonify_exc(422)
 
     @app.errorhandler(HTTPException)
     def http_exception_handler(error):
-        # error_code = getattr(error, 'code', 500)
-        # message = HTTP_STATUS_CODES.get(error_code, str(error))
-        # error_code = error.code
-        return abort(error.code)
+        logger.opt(exception=True).info(error)
+        return jsonify_exc(error.code)  # jsonify_exc(error.code, error.description)
 
     @app.errorhandler(Exception)
     def global_exception_handler(error):
@@ -37,8 +40,6 @@ def register_errors(app):
 
 
 def register_blueprints(app):
-    from bebinca.urls import user_url, chat_url
-
     app.register_blueprint(chat_url.chat_url)
     app.register_blueprint(user_url.user_url, url_prefix='/user')
 
