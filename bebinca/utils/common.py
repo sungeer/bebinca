@@ -33,8 +33,6 @@ def parse_where_str(filter_fields, request_data):
         if value:
             where_str += ' AND ' + key + ' = %s '
             where_values.append(value)
-    if not where_values:
-        where_values = None
     return where_str, where_values
 
 
@@ -48,8 +46,6 @@ def parse_where_like_str(filter_fields, request_data):
         if value:
             where_str += ' AND ' + key + ' LIKE %s '
             where_values.append('%%%%%s%%%%' % value)
-    if not where_values:
-        where_values = None
     return where_str, where_values
 
 

@@ -6,7 +6,7 @@ from bebinca.utils.cors import cors
 from bebinca.utils.tools import abort, jsonify_exc
 from bebinca.utils.log_util import logger
 from bebinca.utils.errors import ValidationError
-from bebinca.urls import user_url, chat_url
+from bebinca.views import user_view, chat_view
 
 
 def create_app():
@@ -40,8 +40,8 @@ def register_errors(app):
 
 
 def register_blueprints(app):
-    app.register_blueprint(chat_url.chat_url)
-    app.register_blueprint(user_url.user_url, url_prefix='/user')
+    app.register_blueprint(chat_view.route)
+    app.register_blueprint(user_view.route, url_prefix='/user')
 
 
 app = create_app()
