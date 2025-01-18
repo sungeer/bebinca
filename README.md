@@ -2,7 +2,7 @@
 
 *A lightweight web API based on Flask.*
 
-> If your project is front-end and back-end separated, or if it is solely a back-end providing external interfaces, then I recommend you to use an asynchronous scaffolding: *[viper](https://github.com/sungeer/pulasan)*.
+> If your project is front-end and back-end separated, or if it is solely a back-end providing external interfaces, then I recommend you to use an asynchronous scaffolding: *[viper](https://github.com/sungeer/viper)*.
 
 ## Installation
 
